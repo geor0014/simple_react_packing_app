@@ -81,10 +81,24 @@ function Form({ onAddItems }) {
   );
 }
 function PackingList({ items, onDeleteItem, onToggleItems }) {
+  const [sort, setSort] = useState("input");
+
+  let sortedItems;
+
+  if (sort === "input") sortedItems = items;
+
+  if (sort === "description")
+    sortedItems = items
+      .slice()
+      .sort((a, b) => a.description.localeCompare(b.description));
+
+  if (sort === "packed")
+    sortedItems = items.slice().sort((a, b) => a.packed - b.packed);
+
   return (
     <div className="list">
       <ul>
-        {items.map((item) => (
+        {sortedItems.map((item) => (
           <Item
             item={item}
             key={item.id}
@@ -93,6 +107,13 @@ function PackingList({ items, onDeleteItem, onToggleItems }) {
           />
         ))}
       </ul>
+      <div className="actions">
+        <select value={sort} onChange={(e) => setSort(e.target.value)}>
+          <option value="input">Sort by input order</option>
+          <option value="description">Sort by description</option>
+          <option value="packed">Sort by packed status</option>
+        </select>
+      </div>
     </div>
   );
 }
@@ -108,9 +129,6 @@ function Stats({ items }) {
 
   const percentage = Math.round((itemsPacked / numItems) * 100);
 
-  console.log(numItems);
-  console.log(itemsPacked);
-  console.log(percentage);
   return (
     <footer className="stats">
       <em>
