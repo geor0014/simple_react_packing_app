@@ -7,11 +7,16 @@ const initialItems = [
 ];
 
 export default function App() {
+  const [items, setItems] = useState([]);
+  function handleAdditems(item) {
+    setItems((items) => [...items, item]);
+  }
+
   return (
     <div className="app">
       <Logo />
-      <Form />
-      <PackingList />
+      <Form onAddItems={handleAdditems} />
+      <PackingList items={items} />
       <Stats />
     </div>
   );
@@ -20,9 +25,10 @@ export default function App() {
 function Logo() {
   return <h1>Travel List</h1>;
 }
-function Form() {
+function Form({ onAddItems }) {
   const [description, setDescription] = useState("");
   const [quantity, setQuantity] = useState(1);
+
   function handleSubmit(event) {
     event.preventDefault();
     if (!description.trim()) return;
@@ -34,8 +40,7 @@ function Form() {
       packed: false,
     };
 
-    console.log("newItem", newItem);
-
+    onAddItems(newItem);
     setDescription("");
     setQuantity(1);
   }
@@ -66,11 +71,11 @@ function Form() {
     </form>
   );
 }
-function PackingList() {
+function PackingList({ items }) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item) => (
+        {items.map((item) => (
           <Item item={item} key={item.id} />
         ))}
       </ul>
